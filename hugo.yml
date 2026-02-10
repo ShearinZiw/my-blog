@@ -59,13 +59,13 @@ params:
 
   # profile-mode
   profileMode:
-    enabled: false # needs to be explicitly set
-    title: ExampleSite
-    subtitle: "This is subtitle"
-    imageUrl: "<img location>"
+    enabled: true # needs to be explicitly set
+    title: "Shearin"
+    subtitle: "This is my Blog"
+    imageUrl: "/img/68b0586671fcd944e44badb9279214990b7d23ec.jpg"
     imageWidth: 120
     imageHeight: 120
-    imageTitle: my image
+    imageTitle: Shearin's image
     buttons:
       - name: Posts
         url: posts
