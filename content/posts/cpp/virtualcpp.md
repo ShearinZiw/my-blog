@@ -1108,13 +1108,188 @@ extern template class MyClass<int>;
 模板采用**延迟实例化**策略，只有在真正使用时才生成代码。  
 通过显式实例化可以减少重复实例化，提高编译效率。
 
----
+## 2.52 被隐藏的基类函数如何调用？
 
-如果你愿意，我还能帮你继续扩展：
+### 背景：为什么基类函数会被隐藏？
 
-- “模板实例化 vs 模板特化 vs 模板重载的区别”
-- “为什么模板必须写在头文件里？”
-- “ODR（One Definition Rule）与模板实例化的关系”
-- “链接错误：undefined reference to `foo<int>` 的根本原因”
+在 C++ 中，只要派生类中出现了**同名成员（函数或变量）**，基类中所有同名成员都会被隐藏（Name Hiding），无论：
 
-你想继续深入哪一部分，我可以帮你写成更专业的内容。
+- 参数是否相同  
+- 是否构成重载  
+- 是否是虚函数  
+
+示例：
+
+```cpp
+class Base {
+public:
+    void func(int x) { cout << "Base: " << x << endl; }
+};
+
+class Derived : public Base {
+public:
+    void func(double y) { cout << "Derived: " << y << endl; }
+};
+```
+
+在 `Derived` 中：
+
+- `func(double)` 会隐藏 `Base::func(int)`
+- 调用 `func(10)` 会报错，因为只看到 `func(double)`，无法匹配 `int`
+
+### 调用被隐藏的基类函数的方法
+
+#### 方法 1：使用作用域运算符（最直接）
+
+```cpp
+Derived d;
+d.Base::func(10);   // 调用 Base::func(int)
+```
+
+特点：
+
+- 明确指定作用域
+- 不改变派生类的可见性，只是“强行调用”
+
+
+
+#### 方法 2：使用 using 声明（推荐）
+
+```cpp
+class Derived : public Base {
+public:
+    using Base::func;   // 让 Base::func 在 Derived 中可见
+    void func(double y) { cout << "Derived: " << y << endl; }
+};
+```
+
+效果：
+
+- `Base::func(int)` 和 `Derived::func(double)` 形成重载集合
+- 调用 `d.func(10)` 会匹配 `Base::func(int)`
+
+
+
+### 注意事项
+
+1. **隐藏不是多态**  
+   隐藏只影响名字查找，不影响虚函数机制。
+
+2. **using 和作用域运算符不会改变虚函数行为**  
+   如果基类函数是虚函数，仍然按动态绑定执行。
+
+3. **静态成员、成员变量也会被隐藏**  
+   解决方式相同：`Base::member` 或 `using Base::member`
+
+
+
+### 高频总结句
+
+> **同名即隐藏。要调用基类函数，用 `Base::func()` 或 `using Base::func;` 把它叫回来。**
+
+
+
+
+
+### C++11 中 typename 与 template 的用法
+
+这两个关键字经常一起出现，但作用完全不同。
+
+
+
+### typename 的用法
+
+`typename` 的作用：**告诉编译器某个名字是类型，而不是变量或静态成员。**
+
+主要用于两类场景：
+
+
+
+#### 1. 依赖于模板参数的类型（Dependent Name）
+
+```cpp
+template <typename T>
+void foo(const T& container) {
+    typename T::value_type x;   // 必须写 typename
+}
+```
+
+原因：
+
+- `T::value_type` 依赖于模板参数 T
+- 编译器无法提前知道它是类型还是变量
+- 必须用 `typename` 明确告诉编译器它是类型
+
+
+
+#### 2. 嵌套类型声明
+
+```cpp
+template <typename T>
+class Wrapper {
+    typename T::iterator it;   // 必须写 typename
+};
+```
+
+
+
+### template 关键字的用法
+
+`template` 在 C++11 中主要用于：
+
+#### 1. 模板模板参数（Template Template Parameter）
+
+允许模板作为另一个模板的参数。
+
+```cpp
+template <template <typename> class Container>
+class Wrapper {
+public:
+    Container<int> c;
+};
+```
+
+使用：
+
+```cpp
+Wrapper<std::vector> w;
+```
+
+
+
+#### 2. 与 typename 组合使用（高级用法）
+
+当访问依赖于模板参数的成员模板时，需要写：
+
+```cpp
+template <typename T>
+void foo(T t) {
+    t.template func<int>();   // 注意 template 关键字
+}
+```
+
+原因：
+
+- `func` 是成员模板
+- `t.func<int>()` 会被解析成 `<` 是小于号
+- `template` 关键字告诉编译器：**func 是模板**
+
+
+
+### typename 与 template 的区别（总结表）
+
+| 关键字 | 作用 | 使用场景 |
+|-----|------|-----------|
+| **typename** | 指明某个名字是类型 | 依赖类型、嵌套类型 |
+| **template** | 指明某个名字是模板 | 成员模板调用、模板模板参数 |
+| 是否相关 | 完全不同 | 常一起出现（如 `t.template func<T>()`） |
+
+
+
+### 总结
+
+- **typename** 用于告诉编译器某个依赖名称是类型，常用于模板中的嵌套类型、迭代器类型等。
+- **template** 用于告诉编译器某个依赖名称是模板，或用于声明模板模板参数。
+- 两者经常一起出现，但语义完全不同：  
+  **typename 解决“这是类型”问题，template 解决“这是模板”问题。**
+
