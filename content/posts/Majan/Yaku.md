@@ -194,7 +194,7 @@ title = 'Yaku'
 ### **③ 用符 × 翻 → 得到基础点（Base Points）**  
 ### **④ 根据庄/闲、自摸/荣和 → 换算成最终得点**
 
-页面内容主要讲的是 **③ 和 ④**（点数计算部分）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)。
+页面内容主要讲的是 **③ 和 ④**（点数计算部分）
 
 ## 点数计算的核心公式
 
@@ -218,7 +218,7 @@ title = 'Yaku'
 - 11–12 翻 → **三倍满 36000**
 - ≥13 翻 → **累计役满 48000**
 
-（来自页面“亲家点数计算”）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)
+
 
 ---
 
@@ -252,8 +252,7 @@ title = 'Yaku'
 每家支付 = \frac{荣和点数}{3}
 \]
 
-页面中给出了完整表格（如 1600/1600/1600）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)。
-
+页面中给出了完整表格（如 1600/1600/1600） 
 ---
 
 ### **闲家自摸（子自摸）**
@@ -263,7 +262,7 @@ title = 'Yaku'
 - **亲家支付：2 份**
 - **其他两个子家支付：1 份**
 
-页面中对应为（例：400/700/1300）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)。
+页面中对应为（例：400/700/1300）  
 
 ---
 
@@ -278,7 +277,7 @@ title = 'Yaku'
 | 11–12 翻 | 三倍满 36000 | 三倍满 24000 |
 | ≥13 翻 | 累计役满 48000 | 累计役满 32000 |
 
-（来自页面“得分速查表”）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)
+（来自页面“得分速查表”）
 
 ---
 
@@ -287,7 +286,7 @@ title = 'Yaku'
 页面提到：
 
 > **30符4翻、60符3翻 → 当作满贯处理**  
-（称为“切上满贯”）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)
+（称为“切上满贯”）
 
 这是部分规则采用的特殊处理方式。
 
@@ -307,7 +306,7 @@ title = 'Yaku'
 | 40符 | 1300 | 2600 | 5200 | 满贯 |
 | 50符 | 1600 | 3200 | 6400 | 满贯 |
 
-（来自页面“荣和点数表：基础部分”）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)
+（来自页面“荣和点数表：基础部分”） 
 
 ---
 
@@ -319,7 +318,7 @@ title = 'Yaku'
 | 40符 | 2000 | 3900 | 7700 | 满贯 |
 | 50符 | 2400 | 4800 | 9600 | 满贯 |
 
-（同样来自页面）  [wiki.queji.com](https://wiki.queji.com/mediawiki/index.php/%E9%BB%9E%E6%95%B8%E8%A8%88%E7%AE%97)
+（同样来自页面）
 
 ---
 
