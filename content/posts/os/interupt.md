@@ -1,7 +1,9 @@
 +++
 date = '2026-04-04T21:54:44+08:00'
-title = 'Interupt'
-tags = ["八股","操作系统","中断"]
+title = '中断与中断上下文'
+categories = ["interview", "os"]
+tags = ["八股", "面试", "操作系统", "中断", "interrupt"]
+summary = '操作系统面试高频：中断上下文、中断处理约束与常见同步问题。'
 +++
 # 中断
 
@@ -521,4 +523,3 @@ spin_unlock_irqrestore(&lock, flags);
 一句话记忆：
 
 > **ISR：不能睡、不能等、不能锁，只能快。**
-

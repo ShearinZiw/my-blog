@@ -123,6 +123,10 @@ params:
 
 menu:
   main:
+    - identifier: interview
+      name: Interview
+      url: /posts/interview/
+      weight: 0
     - identifier: posts 
       name: Posts 
       url: /posts/ 
