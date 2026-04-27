@@ -3,4 +3,4 @@ resources/
 .tmp-build/
 .tmp-build-2/
 .tmp-build-3/
-
+*.pdf
