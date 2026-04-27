@@ -232,4 +232,108 @@ STL 容器的典型操作包括：
 
 
 
+## 优先级队列（priority_queue）
+
+### 定义
+
+`std::priority_queue` 是 C++ STL 提供的 **堆（heap）容器适配器**。
+
+- 保证队首元素始终是 **优先级最高** 的元素  
+- 默认是 **最大堆**（最大值在队首）  
+- 可通过比较器自定义为最小堆或其他排序规则  
+
+一句话：
+
+> **priority_queue = 封装好的堆，支持快速取最大/最小值。**
+
+---
+
+### 底层数据结构
+
+- 底层容器：**vector**
+- 维护方式：**堆算法**（`make_heap`、`push_heap`、`pop_heap`）
+- 默认比较器：`std::less<T>` → **大顶堆**
+
+核心结构：
+
+```
+vector + heap = priority_queue
+```
+
+---
+
+### 定义方式
+
+```cpp
+#include <queue>
+#include <vector>
+#include <functional>
+using namespace std;
+
+// 默认：最大堆
+priority_queue<int> maxHeap;
+
+// 最小堆
+priority_queue<int, vector<int>, greater<int>> minHeap;
+
+// 自定义比较器
+struct cmp {
+    bool operator()(int a, int b) const {
+        return a > b;  // 小顶堆
+    }
+};
+priority_queue<int, vector<int>, cmp> customHeap;
+```
+
+---
+
+### 常用操作与复杂度
+
+| 操作 | 说明 | 时间复杂度 |
+|------|------|------------|
+| `push(x)` | 插入元素 | **O(log n)** |
+| `pop()` | 删除队首（最大/最小） | **O(log n)** |
+| `top()` | 访问队首元素 | **O(1)** |
+| `empty()` | 判空 | O(1) |
+| `size()` | 返回元素个数 | O(1) |
+
+一句话：
+
+> **priority_queue 插入/删除是 log n，取最大/最小是 O(1)。**
+
+---
+
+### 使用场景
+
+- **调度系统**：总是取优先级最高的任务  
+- **Dijkstra 最短路径**：用最小堆维护当前最短距离  
+- **A\* 搜索**：根据估价函数取最优节点  
+- **霍夫曼编码**：反复取最小频率节点  
+- **数据流中位数**：大顶堆 + 小顶堆  
+- **Top-K 问题**：用最小堆维护前 K 大元素  
+
+一句话：
+
+> **凡是“每次取最大/最小”的场景，都适合 priority_queue。**
+
+---
+
+### 总结
+
+- `priority_queue` 本质是 **堆的封装**  
+- 默认 **大顶堆**，可通过比较器改成 **小顶堆**  
+- 插入/删除 O(log n)，访问队首 O(1)  
+- 在图算法、调度、Top-K、数据流处理中非常常用  
+
+---
+
+如果你愿意，我还能帮你整理：
+
+- priority_queue 如何自定义结构体排序  
+- priority_queue 与 multiset 的区别  
+- 手写堆（heap）的实现原理  
+- Top-K 问题的最佳解法总结  
+
+告诉我你想继续哪一部分，我可以帮你写得更深入。
+
 
