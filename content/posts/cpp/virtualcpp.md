@@ -1419,10 +1419,10 @@ void foo(T t) {
 
 - 全特化（Full Specialization）  
   - 针对某个具体类型提供完全替代的模板实现。
-  - 例如：Compare<float>。
+  - 例如：`Compare<float>`。
 - 偏特化（Partial Specialization）  
   - 针对模板参数的部分约束提供更特化的版本。
-  - 例如：Test<int, T>。
+  - 例如：`Test<int, T>`。
   - 仅类模板支持偏特化，函数模板不支持。
 - SFINAE（Substitution Failure Is Not An Error）  
   - 模板替换失败不报错，而是尝试其他重载。

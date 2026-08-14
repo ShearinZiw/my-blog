@@ -10,8 +10,8 @@ summary = 'C++ 面试专题入口，按背诵优先级组织现有文章。'
 
 建议按这个顺序复习：
 
-1. [C++ 面试速背稿](/posts/cpp/cpp-interview-cheatsheet/)
-2. [虚函数与内联](/posts/cpp/virtualcpp/)
+1. [C++ 面试速背稿]({{< relref "../cpp/cpp-interview-cheatsheet.md" >}})
+2. [虚函数与内联]({{< relref "../cpp/virtualcpp.md" >}})
 
 ## 这一专题主要覆盖
 
