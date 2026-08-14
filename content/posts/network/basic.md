@@ -1,6 +1,10 @@
 +++
 date = '2026-04-15T07:26:45+08:00'
-title = 'Basic'
+title = '网络分层、封装与 IP 基础'
+aliases = ['/posts/net/basic/']
+categories = ['interview', 'network']
+tags = ['网络', 'TCP/IP', 'IP', '面试']
+summary = 'OSI/TCP-IP 分层、封装解封装、IP 与子网掩码的基础入口。'
 +++
 
 ## OSI七层模型

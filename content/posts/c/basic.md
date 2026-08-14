@@ -1,8 +1,9 @@
 +++
 date = '2026-04-15T05:17:57+08:00'
-title = 'Basic'
-categories= ["c"]
-tags= ["c", "basic", "面经"]
+title = 'C 语言对象、内存与接口基础'
+categories= ["c", "embedded"]
+tags= ["c", "内存", "指针", "面经"]
+summary = 'C 对象生命周期、内存分区、类型、指针与接口限定符的基础整理。'
 +++
 
 
@@ -211,7 +212,7 @@ void func() {​
 ​
 
 
-## 函数参数压栈顺序（Calling Convention）
+## 函数参数怎样传递：先看目标 ABI
 
 ### 调用约定简介
 调用约定决定：
@@ -221,14 +222,14 @@ void func() {​
 - 栈由谁清理
 - 返回值如何传递
 
-常见调用约定：`__cdecl`、`__stdcall`、`__fastcall`。
+不存在跨平台固定的“参数压栈顺序”。现代 ABI 会混合使用寄存器和栈，并规定栈对齐、易失/非易失寄存器、结构体与浮点参数的传法。
 
 ---
 
-### __cdecl 调用约定（C/C++ 默认）
+### 32 位 x86 的 `__cdecl`
 
 #### 1. 参数压栈顺序
-- **从右到左压栈**
+- 在典型 32 位 x86 ABI 中，参数通常从右到左放入栈
 
 ```c
 foo(a, b, c);
@@ -248,11 +249,11 @@ add esp, 12   ; 调用者清理参数
 
 #### 4. 特点
 - 支持可变参数（如 printf）
-- C/C++ 默认调用约定
+- 常见于 32 位 x86 C 工具链；不是所有 C/C++ 目标的默认规则
 
 ---
 
-### __stdcall 调用约定（WinAPI 常用）
+### 32 位 Windows x86 的 `__stdcall`
 
 #### 1. 参数压栈顺序
 - **从右到左压栈**（与 __cdecl 相同）
@@ -268,111 +269,65 @@ ret 12   ; 被调用者清理参数
 - 使用 **EAX**
 
 #### 4. 特点
-- Windows API 大量使用
+- 历史 32 位 Windows API 大量使用
 - 不支持可变参数
 
 ---
 
-### __cdecl vs __stdcall（核心区别）
+### 为什么不能把这张表用于 MCU 和 64 位平台
 
 | 项目 | __cdecl | __stdcall |
 |------|---------|-----------|
 | 参数压栈顺序 | 右 → 左 | 右 → 左 |
 | 栈清理 | 调用者 | 被调用者 |
 | 可变参数 | 支持 | 不支持 |
-| 常用场景 | C/C++ 默认 | WinAPI |
+| 常用场景 | 典型 32 位 x86 C | 典型 32 位 WinAPI |
 
 一句话：
 
-> **__cdecl 调用者清栈，__stdcall 被调用者清栈。**
+> **上表只描述典型 32 位 x86 差异。Cortex-M 常看 AAPCS，Linux x86-64 常看 System V AMD64 ABI，Windows x64 另有统一调用约定；回答前先说明架构、操作系统与编译器 ABI。**
 
 ---
 
-## C 语言基本类型大小（32 位系统）
+## C 基本类型大小：由数据模型和 ABI 决定
 
-| 类型 | 32 位 | 64 位 |
-|------|-------|--------|
-| bool | 1 | 1 |
-| char | 1 | 1 |
-| short | 2 | 2 |
-| int | 4 | 4 |
-| long | 4 | 8 |
-| long long | 8 | 8 |
-| float | 4 | 4 |
-| double | 8 | 8 |
-| 指针 | 4 | 8 |
+| 类型 | 常见 ILP32 | 常见 LP64 | 常见 LLP64 |
+|------|------:|------:|------:|
+| `char` | 1 | 1 | 1 |
+| `short` | 2 | 2 | 2 |
+| `int` | 4 | 4 | 4 |
+| `long` | 4 | 8 | 4 |
+| `long long` | 8 | 8 | 8 |
+| 指针 | 4 | 8 | 8 |
 
-补充：
-
-- **字（word）= CPU 位宽**  
-  - 32 位 CPU → 1 word = 4 字节  
-  - 64 位 CPU → 1 word = 8 字节
+这些只是常见 ABI，C 标准只规定最小范围和相对关系。Windows x64 常用 LLP64，因此 `long` 仍为 4 字节。工程中用 `sizeof`、`stdint.h` 的定宽类型和目标 ABI 文档确认；“word”在不同 ISA、协议和芯片手册中含义也可能不同。
 
 ---
 
-## 如何在 C 中实现位域映射寄存器？
+## 如何在 C 中可靠访问寄存器？
 
-### 位域结构定义
-
-假设寄存器结构如下：
-
-```
-| CONTROL(16bit) | STATUS(8bit) | DATA(8bit) |
-```
-
-可用位域映射：
+### 首选定宽整数、掩码和移位
 
 ```c
-#pragma pack(1)
-typedef struct {
-    unsigned int control : 16;
-    unsigned int status  : 8;
-    unsigned int data    : 8;
-} Register;
-```
+#include <stdint.h>
 
----
+#define REG_ADDR       0x40000000u
+#define REG_ENABLE_Msk (1u << 3)
 
-### 寄存器映射
-
-```c
-#define REGISTER_BASE_ADDRESS 0x40000000
-typedef volatile Register* RegisterPtr;
-
-int main() {
-    RegisterPtr reg = (RegisterPtr)REGISTER_BASE_ADDRESS;
-
-    reg->control = 0x1234;
-    reg->status  = 0x56;
-    reg->data    = 0x78;
+static inline void reg_set_enable(void)
+{
+    volatile uint32_t *reg = (volatile uint32_t *)REG_ADDR;
+    *reg |= REG_ENABLE_Msk; /* 仅适用于硬件允许读改写的寄存器 */
 }
 ```
 
 ---
 
-### 关键点（面试必问）
+`volatile` 让每次抽象机访问都实际发生，但不提供原子性、并发同步、缓存一致性或内存屏障。W1C、只写、并发修改等寄存器不能随意读改写，应按参考手册和厂商 CMSIS 头文件操作。
 
-#### 1. `volatile`
-寄存器值随时可能变化，必须强制每次从内存读取。
+### 为什么不把 C 位域当成通用寄存器 ABI
 
-#### 2. 对齐问题
-寄存器映射必须 **无填充字节**，因此：
-
-- 使用 `#pragma pack(1)`
-- 或 `__attribute__((packed))`
-
-#### 3. 位域顺序依赖编译器
-不同编译器对位域排列方式不同：
-
-- 与 CPU 大端/小端无关
-- 与编译器实现有关
-
-因此：
-
-> **位域不能用于跨平台通信协议，但适合 MCU 寄存器映射。**
-
-下面把你这段 **“函数中申请堆内存的注意点”** 重新整理成 **最大标题为二级、结构清晰、逻辑紧凑、适合八股文/面试的高质量总结版**。  
-内容重点突出，适合直接放进你的文档。
+位域的分配顺序、可跨越的存储单元、基础类型行为和布局受实现/ABI 影响；`packed` 只能影响部分填充，不能保证位序。只有当芯片厂商头文件和指定编译器 ABI 明确保证布局时才沿用该定义；自建可移植驱动优先使用掩码与移位。
 
 ---
 
@@ -856,8 +811,8 @@ void func(const int *p);
 ```c
 const int g = 10;
 ```
-- 默认具有内部链接（internal linkage）  
-- 跨文件使用需 `extern const`  
+- 在 C 中，文件作用域对象没有 `static` 时通常具有外部链接；`const` 不会把它自动改成内部链接
+- 只供本文件使用时写 `static const`；跨文件使用时在头文件写 `extern const` 声明，并在一个 `.c` 文件定义
 - 常放在只读存储区（依赖编译器/链接脚本）  
 
 ### const 在 C++ 中的补充
@@ -907,9 +862,7 @@ int &r = a;
 - 指针：有独立存储空间  
 - 引用：通常通过指针实现，但对用户透明  
 
-```cpp
-sizeof(int*) != sizeof(int&)
-```
+对引用使用 `sizeof(r)` 得到的是被引用类型的大小，不是实现引用所需的隐藏存储；因此不能用它与指针大小比较来证明引用的底层表示。
 
 ### 使用场景
 
@@ -936,4 +889,3 @@ void func2(int &r);
 - 指针类型必须与目标类型匹配  
 - 释放内存后将指针置空，避免悬挂指针  
 - 动态内存分配后需检查是否成功，避免越界访问  
-

@@ -10,9 +10,11 @@ summary = '操作系统面试专题入口，按高频主题组织现有文章。
 
 建议按这个顺序复习：
 
-1. [操作系统面试整理](/posts/os/os/)
-2. [进程通信与并发问题](/posts/os/IPC/)
-3. [中断与中断上下文](/posts/os/interupt/)
+1. [操作系统面试整理]({{< relref "../os/os.md" >}})
+2. [进程通信与并发问题]({{< relref "../os/IPC.md" >}})
+3. [中断与中断上下文]({{< relref "../os/interupt.md" >}})
+4. [RTOS 调度、同步与实时故障诊断]({{< relref "../embedded/rtos.md" >}})
+5. [Linux 与驱动主干]({{< relref "../embedded/linux-driver.md" >}})
 
 ## 这一专题主要覆盖
 
